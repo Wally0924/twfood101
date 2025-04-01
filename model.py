@@ -57,11 +57,23 @@ class SwinFoodClassifier(pl.LightningModule):
         return loss
 
     def test_step(self, batch, batch_idx):
+        """
+        使用 trainer.test() 進行測試評估，會自動計算您在 test_step 中定義的指標
+        """
         loss, preds, labels = self._common_step(batch, batch_idx)
         acc = self.test_accuracy(preds, labels)
         self.log('test_loss', loss, on_epoch=True, logger=True)
         self.log('test_acc', acc, on_epoch=True, logger=True)
         return loss
+    
+    def predict_step(self, batch, batch_idx):
+        """
+        獲取預測結果
+        """
+        imgs = batch
+        outputs = self(imgs)
+        preds = torch.argmax(outputs, dim=1)
+        return preds
 
     def configure_optimizers(self):
         # AdamW is often recommended for transformer models

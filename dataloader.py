@@ -96,7 +96,7 @@ class KFoldFood101DataModule(pl.LightningDataModule):
         self.train_labels = [int(row[1]) for _, row in tqdm(train_df.iterrows(), total=len(train_df), desc="Loading train labels") if Path(self.data_dir).joinpath(row[2]).exists()]
 
     def setup(self, stage: str | None = None):
-        if stage == 'fit' or stage is None:
+        if stage == 'fit' or stage == 'validate' or stage is None:
             self.dataset = TWFoodDataset(
                 images=self.train_images,
                 labels=self.train_labels,
@@ -104,7 +104,7 @@ class KFoldFood101DataModule(pl.LightningDataModule):
             )
             self._setup_folds()
 
-        if stage != 'fit' and stage is not None:
+        if stage != 'fit' and stage != 'validate' and stage is not None:
              print(f"Stage {stage} not explicitly handled in setup.")
 
     def _get_fold_dataloader(self, fold_indices: np.ndarray, shuffle: bool) -> DataLoader:
@@ -138,6 +138,7 @@ class TestFood101DataModule(pl.LightningDataModule):
     def __init__(self, data_dir: str = './data', ds_file: str='tw_food_101_test_list.csv', batch_size: int = 32, num_workers: int = 4, image_size: int = 224):
         super().__init__()
         self.data_dir = data_dir
+        self.ds_file = ds_file
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.image_size = image_size
@@ -157,20 +158,23 @@ class TestFood101DataModule(pl.LightningDataModule):
 
     def prepare_data(self):
         # Load test data
-        test_df = pd.read_csv(Path(self.data_dir).joinpath(self.test_ds_file), header=None)
+        test_df = pd.read_csv(Path(self.data_dir).joinpath(self.ds_file), header=None)
         self.test_images = [Path(self.data_dir).joinpath(row[1]) for _, row in tqdm(test_df.iterrows(), total=len(test_df), desc="Loading test image paths") if Path(self.data_dir).joinpath(row[1]).exists()]
 
     def setup(self, stage: str | None = None):
         # Assign test dataset for use in dataloader(s)
-        if stage == 'test' or stage is None:
+        if stage == 'test' or stage == 'predict' or stage is None:
             self.test_dataset = TWFoodDataset(
                 images=self.test_images,
                 labels=None,
                 transform=self.data_transforms['test']
             )
 
-        if stage != 'test' and stage is not None:
+        if stage != 'test' and stage != 'predict' and stage is not None:
              print(f"Stage {stage} not explicitly handled in setup.")
 
     def test_dataloader(self):
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=True, persistent_workers=True if self.num_workers > 0 else False)
+    
+    def predict_dataloader(self):
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, pin_memory=True, persistent_workers=True if self.num_workers > 0 else False)
