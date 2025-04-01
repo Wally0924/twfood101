@@ -1,6 +1,7 @@
 # Taiwan Food 101
 這是北科深度學習的第二次作業，準確率約為95.4%.
 為了減少處理跟硬體溝通的程式碼，選擇使用了pytorch lightning framework.
+![image](https://github.com/PHChenGit/twfood101/blob/master/2025-04-01_9.55.47.png)
 
 # How to start
 ## Install the dependency packages
