@@ -45,15 +45,15 @@ class SwinFoodClassifier(pl.LightningModule):
         loss, preds, labels = self._common_step(batch, batch_idx)
         acc = self.train_accuracy(preds, labels)
         # Use prog_bar=True to display metrics in the progress bar
-        self.log('train_loss', loss, on_step=True, on_epoch=True, logger=True, prog_bar=True)
-        self.log('train_acc', acc, on_step=True, on_epoch=True, logger=True, prog_bar=True)
+        self.log('train_loss', loss, on_step=False, on_epoch=True, logger=True, prog_bar=True)
+        self.log('train_acc', acc, on_step=False, on_epoch=True, logger=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         loss, preds, labels = self._common_step(batch, batch_idx)
         acc = self.val_accuracy(preds, labels)
-        self.log('val_loss', loss, on_epoch=True, logger=True, prog_bar=True)
-        self.log('val_acc', acc, on_epoch=True, logger=True, prog_bar=True)
+        self.log('val_loss', loss, on_epoch=False, logger=True, prog_bar=True)
+        self.log('val_acc', acc, on_epoch=False, logger=True, prog_bar=True)
         return loss
 
     def test_step(self, batch, batch_idx):
@@ -77,10 +77,10 @@ class SwinFoodClassifier(pl.LightningModule):
 
     def configure_optimizers(self):
         # AdamW is often recommended for transformer models
-        optimizer = optim.AdamW(self.parameters(), lr=self.learning_rate, weight_decay=0.01)
+        optimizer = optim.AdamW(self.parameters(), lr=self.learning_rate, weight_decay=0.001)
         # Optional: Add a learning rate scheduler
         # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5, last_epoch=-1)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.5, last_epoch=-1)
         return {
             "optimizer": optimizer,
             "lr_scheduler": {
