@@ -12,13 +12,14 @@ from trainer import KFoldTrainer
 
 if __name__ == '__main__':
     pl.seed_everything(42) # for reproducibility
+    torch.set_float32_matmul_precision('high')
 
     # --- Configuration ---
     DATA_DIR = '/home/rvl1421/MIngWei/NTUT_Deep_Learning/taiwanese-food-101/tw_food_101/tw_food_101' # Change if you want data stored elsewhere
     DATA_CSV_FILE = 'tw_food_101_train.csv'
     MODEL_NAME = 'swin_base_patch4_window7_224.ms_in22k' # Example SwinV2 model from timm pre-trained on ImageNet-22k
     IMAGE_SIZE = 224 # Must match the model input size
-    BATCH_SIZE = 16   # Adjust based on your GPU memory
+    BATCH_SIZE = 32   # Adjust based on your GPU memory
     NUM_WORKERS = 6   # Adjust based on your system cores
     LEARNING_RATE = 3e-4 # Starting point, might need tuning
     MAX_EPOCHS = 80    # Adjust as needed
