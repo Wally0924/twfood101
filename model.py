@@ -45,15 +45,15 @@ class SwinFoodClassifier(pl.LightningModule):
         loss, preds, labels = self._common_step(batch, batch_idx)
         acc = self.train_accuracy(preds, labels)
         # Use prog_bar=True to display metrics in the progress bar
-        self.log('train_loss', loss, on_step=False, on_epoch=True, logger=True, prog_bar=True)
-        self.log('train_acc', acc, on_step=False, on_epoch=True, logger=True, prog_bar=True)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, logger=True, prog_bar=True)
+        self.log('train_acc', acc, on_step=True, on_epoch=True, logger=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         loss, preds, labels = self._common_step(batch, batch_idx)
         acc = self.val_accuracy(preds, labels)
-        self.log('val_loss', loss, on_step=False, on_epoch=True, logger=True, prog_bar=True)     #on_step = False
-        self.log('val_acc', acc, on_step=False, on_epoch=True, logger=True, prog_bar=True)       #on_step = False
+        self.log('val_loss', loss, on_epoch=True, logger=True, prog_bar=True)
+        self.log('val_acc', acc, on_epoch=True, logger=True, prog_bar=True)
         return loss
 
     def test_step(self, batch, batch_idx):

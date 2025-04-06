@@ -23,7 +23,7 @@ def process_pred_result_to_csv(results):
     print("Test predictions saved to 'test_predictions.csv'")
 
 def main():
-    DATA_DIR = 'datasets/tw_food_101/' # Change if you want data stored elsewhere
+    DATA_DIR = '/home/rvl1421/MIngWei/NTUT_Deep_Learning/taiwanese-food-101/tw_food_101/tw_food_101' # Change if you want data stored elsewhere
     DATA_CSV_FILE = 'tw_food_101_test_list.csv'
     MODEL_NAME = '/home/rvl/Documents/tw_food_101/checkpoints/swin-food101-epoch=19-val_acc=0.91.ckpt'
     IMAGE_SIZE = 224 # Must match the model input size

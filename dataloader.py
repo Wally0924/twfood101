@@ -16,7 +16,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 class TWFoodDataset(Dataset): #Read data & preprocess101
     def __init__(self, images: list, labels: list=[], transform=None):
         # Read the CSV file into a DataFrame
-        self.images = images 
+        self.images = images
         self.labels = labels
         self.transform = transform
 
@@ -61,6 +61,8 @@ class KFoldFood101DataModule(pl.LightningDataModule):
             'train': transforms.Compose([
                 transforms.RandomResizedCrop(self.image_size),
                 transforms.RandomHorizontalFlip(),
+                transforms.RandomAffine(degrees=15, translate=(0.1, 0.1), scale=(0.8, 1.2), shear=5),  
+                # transforms.RandomPerspective(distortion_scale=0.4, p=0.5), 
                 transforms.TrivialAugmentWide(), # Good general augmentation
                 transforms.ToTensor(),
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
